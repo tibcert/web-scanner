@@ -1,0 +1,15 @@
+name: Scan Scripts Check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Bash scripts
+        run: |
+          sudo apt install -y shellcheck
+          shellcheck scanners/*.sh || true
