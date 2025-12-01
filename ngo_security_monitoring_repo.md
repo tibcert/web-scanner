@@ -1,8 +1,8 @@
 # TIBCERT Website Security Monitoring — Full Guid
 
-This repository provides a **complete, production‑ready security monitoring system** for NGOs managing many websites (WordPress, custom apps, static sites, PHP apps, etc.) without using Docker. Everything runs directly on a Linux server using native packages, cron jobs, Bash scripts, and lightweight Node.js/PHP tooling.
+This repository provides a **complete, production‑ready security monitoring system** for tibcerts managing many websites (WordPress, custom apps, static sites, PHP apps, etc.) without using Docker. Everything runs directly on a Linux server using native packages, cron jobs, Bash scripts, and lightweight Node.js/PHP tooling.
 
-The guide is written so NGOs with limited technical staff can maintain strong security without expensive commercial services.
+The guide is written so tibcerts with limited technical staff can maintain strong security without expensive commercial services.
 
 ---
 
@@ -13,7 +13,7 @@ The guide is written so NGOs with limited technical staff can maintain strong se
 - 🕸️ **Full website vulnerability scanning** (OWASP ZAP automation)
 - 🔎 **Server vulnerability scanning** (Nikto + RKHunter)
 - 🧬 **Custom YARA rules** to detect suspicious PHP/JS malware
-- 🗂️ **Centralized logs** in `/var/log/ngosec/`
+- 🗂️ **Centralized logs** in `/var/log/tibcertsec/`
 - 📧 **Daily & weekly email alerts**
 - 🖥️ **Optional lightweight web dashboard** (Node.js) — non‑docker
 - 🗓️ **Automated cron jobs** for all scanners
@@ -23,7 +23,7 @@ The guide is written so NGOs with limited technical staff can maintain strong se
 # 📁 Directory Structure
 
 ```
-ngosec/
+tibcertsec/
  ├── scanners/
  │    ├── scan_wordpress.sh
  │    ├── scan_malware.sh
@@ -85,7 +85,7 @@ sudo apt install -y ruby ruby-dev build-essential
 sudo gem install wpscan
 ```
 
-NGOs: request more API credits here:  
+tibcerts: request more API credits here:  
 https://wpscan.com/rgstr
 
 ---
@@ -122,7 +122,7 @@ sudo apt install yara
 
 Add custom WordPress/PHP malware signatures in:
 ```
-ngosec/scanners/yara_rules/*.yar
+tibcertsec/scanners/yara_rules/*.yar
 ```
 
 ---
@@ -137,11 +137,11 @@ Scans directories using ClamAV + Maldet + YARA.
 ```
 #!/bin/bash
 TARGET="$1"
-LOG="/var/log/ngosec/malware_$(date +%F).log"
+LOG="/var/log/tibcertsec/malware_$(date +%F).log"
 
 clamscan -ri "$TARGET" >> $LOG
 maldet -a "$TARGET" >> $LOG
-yara -r ngosec/scanners/yara_rules "$TARGET" >> $LOG
+yara -r tibcertsec/scanners/yara_rules "$TARGET" >> $LOG
 ```
 
 ---
@@ -150,7 +150,7 @@ yara -r ngosec/scanners/yara_rules "$TARGET" >> $LOG
 ```
 #!/bin/bash
 SITE="$1"
-LOG="/var/log/ngosec/wpscan_$(basename $SITE)_$(date +%F).log"
+LOG="/var/log/tibcertsec/wpscan_$(basename $SITE)_$(date +%F).log"
 
 wpscan --url "$SITE" --enumerate ap,at,cb,dbe --api-token YOUR_TOKEN >> $LOG
 ```
@@ -160,7 +160,7 @@ wpscan --url "$SITE" --enumerate ap,at,cb,dbe --api-token YOUR_TOKEN >> $LOG
 ## **3.3 scan_server.sh**
 ```
 #!/bin/bash
-LOG="/var/log/ngosec/server_$(date +%F).log"
+LOG="/var/log/tibcertsec/server_$(date +%F).log"
 nikto -h https://yourdomain.com >> $LOG
 rkhunter --check --skip-keypress >> $LOG
 ```
@@ -171,7 +171,7 @@ rkhunter --check --skip-keypress >> $LOG
 ```
 #!/bin/bash
 TARGET="$1"
-/opt/zap/zap.sh -cmd -quickurl "$TARGET" -quickout "/var/log/ngosec/zap_$(date +%F).html"
+/opt/zap/zap.sh -cmd -quickurl "$TARGET" -quickout "/var/log/tibcertsec/zap_$(date +%F).html"
 ```
 
 ---
@@ -185,23 +185,23 @@ sudo crontab -e
 
 Add daily malware scanning:
 ```
-0 1 * * * /usr/local/ngosec/scanners/scan_malware.sh /var/www/ >> /dev/null
+0 1 * * * /usr/local/tibcertsec/scanners/scan_malware.sh /var/www/ >> /dev/null
 ```
 
 Daily WordPress scanning:
 ```
-0 2 * * * /usr/local/ngosec/scanners/scan_wordpress.sh https://site1.org
-0 2 * * * /usr/local/ngosec/scanners/scan_wordpress.sh https://site2.org
+0 2 * * * /usr/local/tibcertsec/scanners/scan_wordpress.sh https://site1.org
+0 2 * * * /usr/local/tibcertsec/scanners/scan_wordpress.sh https://site2.org
 ```
 
 Weekly server scan:
 ```
-0 3 * * 0 /usr/local/ngosec/scanners/scan_server.sh
+0 3 * * 0 /usr/local/tibcertsec/scanners/scan_server.sh
 ```
 
 OWASP ZAP weekly scan:
 ```
-0 4 * * 0 /usr/local/ngosec/scanners/scan_vulns.sh https://yourdomain.org
+0 4 * * 0 /usr/local/tibcertsec/scanners/scan_vulns.sh https://yourdomain.org
 ```
 
 ---
@@ -215,7 +215,7 @@ sudo apt install mailutils
 
 Send latest scans via cron:
 ```
-mail -s "NGO Daily Security Report" your@email.com < $(ls -t /var/log/ngosec/*.log | head -1)
+mail -s "tibcert Daily Security Report" your@email.com < $(ls -t /var/log/tibcertsec/*.log | head -1)
 ```
 
 ---
@@ -229,7 +229,7 @@ sudo apt install -y nodejs npm
 
 ### Start Dashboard
 ```
-cd ngosec/dashboard
+cd tibcertsec/dashboard
 npm install
 npm start
 ```
@@ -250,7 +250,7 @@ Displays:
 # 🔐 7. Hardening & Best Practices
 
 - Enable automatic OS security updates  
-- Use Cloudflare for WAF (free for NGOs)  
+- Use Cloudflare for WAF (free for tibcerts)  
 - Enforce 2FA everywhere  
 - Disable password login, use SSH keys  
 - Weekly backup snapshots
@@ -259,15 +259,7 @@ Displays:
 
 # 📗 8. Conclusion
 
-This **non‑Docker** setup is ideal for NGOs that want:
+This **non‑Docker** setup is ideal for tibcerts that want:
 - Full control over servers
 - No container overhead
 - Native OS-level security tooling
-
-I can also generate:
-✅ PDF version  
-✅ A ZIP of this full repository  
-✅ GitHub‑ready push commands
-
-Just let me know!
-
