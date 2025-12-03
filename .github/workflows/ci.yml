@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check Bash scripts
-        run: |
-          sudo apt install -y shellcheck
-          shellcheck scanners/*.sh || true
+      - name: Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Lint bash scripts
+        run: shellcheck scanners/*.sh || true

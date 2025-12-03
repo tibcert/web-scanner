@@ -1,0 +1,5 @@
+body { font-family: Arial, sans-serif; margin: 20px; background: #f7f9fc; }
+header { margin-bottom: 10px; }
+main { background: #fff; padding: 15px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+pre { white-space: pre-wrap; word-break: break-word; }
+a { color: #1565c0; text-decoration: none; }
